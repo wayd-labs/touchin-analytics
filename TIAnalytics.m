@@ -28,7 +28,7 @@
     }
 }
 
-#import "Analytics-Conf.h"
+#import "TIAnalytics-Conf.h"
 
 -(BOOL) is_mixpanel {
     return [mixpaneltoken length] != 0;

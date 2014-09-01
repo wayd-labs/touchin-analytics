@@ -10,7 +10,7 @@
 
 @interface TIAnalytics : NSObject
 
-+ (Analytics *) shared;
++ (TIAnalytics *) shared;
 
 -(void) initialize;
 -(void) trackEvent:(NSString *) name;
