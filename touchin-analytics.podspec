@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
     'touchin-analytics' => ['Pod/Assets/*.png', 'TIAnalytics.h', 'TIAnalytics.m']
   }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
+  s.public_header_files = 'Pod/Classes/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'FlurrySDK'
   s.dependency 'Mixpanel'

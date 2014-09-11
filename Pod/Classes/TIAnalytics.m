@@ -9,26 +9,27 @@
 #import "TIAnalytics.h"
 #import "Flurry.h"
 #import "MixPanel.h"
-#import <MobileAppTracker/MobileAppTracker.h>
+#import "MobileAppTracker.h"
 #import <AdSupport/AdSupport.h>
+#import <UIKit/UIKit.h>
+#import <Aspects.h>
 
 @implementation TIAnalytics
 
-+ (Analytics *)shared
-{
-    static Analytics *sharedSingleton;
++ (instancetype)shared {
+    static id sharedInstance = nil;
     
-    @synchronized(self)
-    {
-        if (!sharedSingleton) {
-            sharedSingleton = [[Analytics alloc] init];
-        }
-        
-        return sharedSingleton;
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    
+    return sharedInstance;
 }
 
-#import "TIAnalytics-Conf.h"
+NSString* flurrytoken;
+NSString* mixpaneltoken;
+NSArray* mattoken;
 
 -(BOOL) is_mixpanel {
     return [mixpaneltoken length] != 0;
@@ -39,27 +40,28 @@
 }
 
 -(BOOL) is_mat {
-    return [mat_advertiserid length] && [mat_conversionkey length];
+//    return [mat_advertiserid length] && [mat_conversionkey length];
+    return [mattoken count] == 2;
 }
 
--(void) initialize {
-    //    [TestFlight takeOff:@"90ae10d6-8abc-4988-970d-3c89f9fc76b9"];
-//    NSString* localyticstoken = @"2699aeea00eb662ecd7ec6e-964dbb54-eaee-11e3-45f7-00a426b17dd8";
-    
-    if (self.is_mixpanel) {
-        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
-        NSLog(@"Mixpanel initialized");
-    }
-    
-    if (self.is_flurry) {
+-(void) initialize: (NSDictionary*) tokens {
+    if ([tokens objectForKey:@"flurry"]) {
+        flurrytoken = [tokens objectForKey:@"flurry"];
         [Flurry setCrashReportingEnabled:NO];
         [Flurry startSession:flurrytoken];
         NSLog(@"Flurry initialized");
     }
     
-    if (self.is_mat) {
-        [MobileAppTracker initializeWithMATAdvertiserId:mat_advertiserid
-                                       MATConversionKey:mat_conversionkey];
+    if ([tokens objectForKey:@"mixpanel"]) {
+        mixpaneltoken = [tokens objectForKey:@"mixpanel"];
+        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
+        NSLog(@"Mixpanel initialized");
+    }
+    
+    if ([tokens objectForKey:@"mat"]) {
+        mattoken = [tokens objectForKey:@"mat"];
+        [MobileAppTracker initializeWithMATAdvertiserId:mattoken[0]
+                                       MATConversionKey:mattoken[1]];
         [MobileAppTracker setAppleAdvertisingIdentifier:[[ASIdentifierManager sharedManager] advertisingIdentifier]
                          advertisingTrackingEnabled:[[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]];
         NSLog(@"MAT initialized");
@@ -72,6 +74,11 @@
         [prefs setBool:true forKey:@"was_launched"];
     }
     [self trackEvent:@"APP_LAUNCH"];
+    
+    //required for MAT attribution tracking
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidBecomeActive)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 -(void) trackEvent:(NSString *) name {
@@ -112,6 +119,13 @@
     if (self.is_mat) {
         [MobileAppTracker applicationDidOpenURL:[url absoluteString] sourceApplication:sourceApplication];
     }
+}
+
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationDidBecomeActiveNotification
+                                                  object:nil];
 }
 
 @end

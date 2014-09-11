@@ -12,7 +12,7 @@
 
 + (TIAnalytics *) shared;
 
--(void) initialize;
+-(void) initialize: (NSDictionary*) tokens;
 -(void) trackEvent:(NSString *) name;
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties;
 -(void) identify: (NSString *)identity;
