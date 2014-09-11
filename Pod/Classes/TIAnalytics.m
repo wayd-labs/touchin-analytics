@@ -12,7 +12,6 @@
 #import "MobileAppTracker.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
-#import <Aspects.h>
 
 @implementation TIAnalytics
 
