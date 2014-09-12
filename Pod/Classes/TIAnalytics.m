@@ -128,6 +128,11 @@ NSMutableDictionary* timedEvents;
     [self trackEvent:[name stringByAppendingString:@"END"] properties:fullProperties];
 }
 
+-(void) trackError: (NSString *) name properties: (NSDictionary *) properties {
+    properties[@"error_name"] = name;
+    [self trackEvent:"ERROR" properties:properties];
+}
+
 -(void) identify: (NSString *)identity {
     //activates mixpanel people (to be honest no, it's not)
     if (self.is_mixpanel) {

@@ -20,6 +20,7 @@
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties;
 -(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) properties;
 
+-(void) trackError: (NSString *) name properties: (NSDictionary *) properties;
 
 -(void) identify: (NSString *)identity;
 
