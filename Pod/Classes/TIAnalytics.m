@@ -30,6 +30,9 @@ NSString* flurrytoken;
 NSString* mixpaneltoken;
 NSArray* mattoken;
 
+NSMutableDictionary* timedEvents;
+
+
 -(BOOL) is_mixpanel {
     return [mixpaneltoken length] != 0;
 }
@@ -94,6 +97,35 @@ NSArray* mattoken;
     }
     NSLog(@"ANALYTICS: %@, %@", name, properties);
 
+}
+
+-(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties {
+    if (!timedEvents) {
+        timedEvents = [NSMutableDictionary new];
+    }
+    
+    if ([timedEvents objectForKey:name]) {
+        NSLog(@"DOUBLED TIMED EVENT! %@", name);
+    }
+    timedEvents[name] = properties;
+    [self trackEvent:[name stringByAppendingString:@"START"] properties:properties];
+    timedEvents[name][@"time"] = [NSDate date];
+    NSLog(@"ANALYTICS timed event start %@ %@", name, timedEvents[name][@"time"]);
+}
+
+-(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) addproperties {
+    NSTimeInterval time = -1;
+    if (![timedEvents objectForKey:name]) {
+        NSLog(@"NO SUCH TIMED EVENT! %@", name);
+    } else {
+        time = [[NSDate date] timeIntervalSinceDate:timedEvents[name][@"time"]];
+    }
+    timedEvents[name][@"time"] = [NSString stringWithFormat:@"%f", time];
+    NSLog(@"ANALYTICS timed event end %@ %@", name, timedEvents[name][@"time"]);
+    NSMutableDictionary *fullProperties = [NSMutableDictionary new];
+    [fullProperties addEntriesFromDictionary:timedEvents[name]];
+    [fullProperties addEntriesFromDictionary:addproperties];
+    [self trackEvent:[name stringByAppendingString:@"END"] properties:fullProperties];
 }
 
 -(void) identify: (NSString *)identity {

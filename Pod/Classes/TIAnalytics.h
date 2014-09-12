@@ -13,8 +13,14 @@
 + (TIAnalytics *) shared;
 
 -(void) initialize: (NSDictionary*) tokens;
+
 -(void) trackEvent:(NSString *) name;
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties;
+
+-(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties;
+-(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) properties;
+
+
 -(void) identify: (NSString *)identity;
 
 - (void)applicationDidBecomeActive;
