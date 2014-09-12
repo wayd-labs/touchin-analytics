@@ -132,7 +132,7 @@ NSMutableDictionary* timedEvents;
     NSMutableDictionary *props = [NSMutableDictionary new];
     [props addEntriesFromDictionary:properties];
     props[@"error_name"] = name;
-    [self trackEvent:"ERROR" properties:props];
+    [self trackEvent:@"ERROR" properties:props];
 }
 
 -(void) identify: (NSString *)identity {
