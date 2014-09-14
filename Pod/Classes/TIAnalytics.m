@@ -107,7 +107,9 @@ NSMutableDictionary* timedEvents;
     if ([timedEvents objectForKey:name]) {
         NSLog(@"DOUBLED TIMED EVENT! %@", name);
     }
-    timedEvents[name] = properties;
+    NSMutableDictionary* mutableProps = [NSMutableDictionary new];
+    [mutableProps addEntriesFromDictionary:properties];
+    timedEvents[name] = mutableProps;
     [self trackEvent:[name stringByAppendingString:@"START"] properties:properties];
     timedEvents[name][@"time"] = [NSDate date];
     NSLog(@"ANALYTICS timed event start %@ %@", name, timedEvents[name][@"time"]);
