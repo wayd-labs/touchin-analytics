@@ -36,5 +36,5 @@ Pod::Spec.new do |s|
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'FlurrySDK'
   s.dependency 'Mixpanel'
-  s.dependency 'MobileAppTracker'
+  s.dependency 'MobileAppTracker', '3.4.1'
 end
