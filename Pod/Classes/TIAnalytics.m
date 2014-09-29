@@ -110,7 +110,7 @@ NSMutableDictionary* timedEvents;
     NSMutableDictionary* mutableProps = [NSMutableDictionary new];
     [mutableProps addEntriesFromDictionary:properties];
     timedEvents[name] = mutableProps;
-    [self trackEvent:[name stringByAppendingString:@"START"] properties:properties];
+    [self trackEvent:[name stringByAppendingString:@"_start"] properties:properties];
     timedEvents[name][@"time"] = [NSDate date];
     NSLog(@"ANALYTICS timed event start %@ %@", name, timedEvents[name][@"time"]);
 }
@@ -127,7 +127,7 @@ NSMutableDictionary* timedEvents;
     NSMutableDictionary *fullProperties = [NSMutableDictionary new];
     [fullProperties addEntriesFromDictionary:timedEvents[name]];
     [fullProperties addEntriesFromDictionary:addproperties];
-    [self trackEvent:[name stringByAppendingString:@"END"] properties:fullProperties];
+    [self trackEvent:[name stringByAppendingString:@"_end"] properties:fullProperties];
 }
 
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties {
