@@ -23,6 +23,9 @@
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties;
 
 -(void) identify: (NSString *)identity;
+-(void) peopleSet: (NSDictionaty *) data;
+-(void) peopleSet: (NSString *)property to:(id)object;
+-(void) peopleIncrement: (NSDictionary *) data;
 
 - (void)applicationDidBecomeActive;
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication;

@@ -144,7 +144,29 @@ NSMutableDictionary* timedEvents;
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance identify:identity];
     }
+    [self peopleSet:@"last_login" to:[NSDate date]];
     NSLog(@"ANALYTICS IDENTIFY: %@", identity);
+}
+
+-(void) peopleSet: (NSDictionaty *) data {
+    if (self.is_mixpanel) {
+        [Mixpanel.sharedInstance.people set:data];
+    }
+    NSLog(@"ANALYTICS PeopleSet: %@", data);
+}
+
+-(void) peopleSet: (NSString *)property to:(id)object {
+    if (self.is_mixpanel) {
+        [Mixpanel.sharedInstance.people set:property to:object];
+    }
+    NSLog(@"ANALYTICS PeopleSet %s to %@", property, object);
+}
+
+-(void) peopleIncrement: (NSDictionary *) data {
+    if (self.is_mixpanel) {
+        [Mixpanel.sharedInstance.people increment:data];        
+    }
+    NSLog(@"ANALYTICS People Increment: %@", data);
 }
 
 - (void)applicationDidBecomeActive
