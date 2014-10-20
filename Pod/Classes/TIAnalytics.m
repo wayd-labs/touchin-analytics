@@ -148,7 +148,7 @@ NSMutableDictionary* timedEvents;
     NSLog(@"ANALYTICS IDENTIFY: %@", identity);
 }
 
--(void) peopleSet: (NSDictionaty *) data {
+-(void) peopleSet: (NSDictionary *) data {
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance.people set:data];
     }
@@ -159,7 +159,7 @@ NSMutableDictionary* timedEvents;
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance.people set:property to:object];
     }
-    NSLog(@"ANALYTICS PeopleSet %s to %@", property, object);
+    NSLog(@"ANALYTICS PeopleSet %@ to %@", property, object);
 }
 
 -(void) peopleIncrement: (NSDictionary *) data {
