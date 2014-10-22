@@ -46,6 +46,18 @@ NSMutableDictionary* timedEvents;
     return [mattoken count] == 2;
 }
 
+- (NSString*) isoNowDate {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    return [dateFormatter stringFromDate:[NSDate date]];
+}
+
+- (NSString*) nowTime {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"HH:mm"];
+    return [dateFormatter stringFromDate:[NSDate date]];
+}
+
 -(void) initialize: (NSDictionary*) tokens {
     if ([tokens objectForKey:@"flurry"]) {
         flurrytoken = [tokens objectForKey:@"flurry"];
@@ -71,11 +83,12 @@ NSMutableDictionary* timedEvents;
     
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
     if (![prefs boolForKey:@"was_launched"]) {
-        [self trackEvent:@"APP_LAUNCH_FIRST"];
+        [self trackEvent:@"APP_LAUNCH_FIRST" properties:datetimeprop];
         [prefs setBool:true forKey:@"was_launched"];
     }
-    [self trackEvent:@"APP_LAUNCH"];
+    [self trackEvent:@"APP_LAUNCH" properties:datetimeprop];
     
     //required for MAT attribution tracking
     [[NSNotificationCenter defaultCenter] addObserver:self
