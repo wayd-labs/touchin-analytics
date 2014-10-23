@@ -10,6 +10,7 @@
 #import "Flurry.h"
 #import "MixPanel.h"
 #import "MobileAppTracker.h"
+#import "AppsFlyerTracker.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
 
@@ -28,6 +29,7 @@
 
 NSString* flurrytoken;
 NSString* mixpaneltoken;
+NSArray* appsflyertoken;
 NSArray* mattoken;
 
 NSMutableDictionary* timedEvents;
@@ -44,6 +46,10 @@ NSMutableDictionary* timedEvents;
 -(BOOL) is_mat {
 //    return [mat_advertiserid length] && [mat_conversionkey length];
     return [mattoken count] == 2;
+}
+
+-(BOOL) is_appsflyer {
+    return [appsflyertoken count] == 2;
 }
 
 - (NSString*) isoNowDate {
@@ -81,6 +87,14 @@ NSMutableDictionary* timedEvents;
         NSLog(@"MAT initialized");
     }
     
+    if ([tokens objectForKey:@"appsflyer"]) {
+        appsflyertoken = [tokens objectForKey:@"appsflyer"];
+        [AppsFlyerTracker sharedTracker].appsFlyerDevKey = appsflyertoken[0];
+        [AppsFlyerTracker sharedTracker].appleAppID = appsflyertoken[1];
+        [AppsFlyerTracker sharedTracker].isHTTPS = YES;
+        NSLog(@"AppsFlyer initialized");
+    }
+
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
@@ -187,6 +201,10 @@ NSMutableDictionary* timedEvents;
     if (self.is_mat) {
         // MAT will not function without the measureSession call included
         [MobileAppTracker measureSession];
+    }
+    if (self.is_appsflyer) {
+        // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
+        [[AppsFlyerTracker sharedTracker] trackAppLaunch];
     }
     [self trackEvent:@"SESSION_START"];
 }

@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "0.1.1"
+  s.version          = "0.2.0"
   s.summary          = "A short description of touchin-analytics."
   s.description      = <<-DESC
                        An optional longer description of touchin-analytics
@@ -36,5 +36,6 @@ Pod::Spec.new do |s|
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'FlurrySDK'
   s.dependency 'Mixpanel'
+  s.dependency 'AppsFlyer-SDK'
   s.dependency 'MobileAppTracker', '3.4.1'
 end
