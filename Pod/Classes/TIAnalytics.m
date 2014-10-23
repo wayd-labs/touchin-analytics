@@ -167,12 +167,19 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) identify: (NSString *)identity {
-    //activates mixpanel people (to be honest no, it's not)
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance identify:identity];
     }
     [self peopleSet:@"last_login" to:[NSDate date]];
     NSLog(@"ANALYTICS IDENTIFY: %@", identity);
+}
+
+-(void) signUp:(NSString *)identity {
+    if (self.is_mixpanel) {
+        [Mixpanel.sharedInstance createAlias:identity forDistinctID:Mixpanel.sharedInstance.distinctId];
+    }    
+    [self peopleSet:@"sign_up" to:[NSDate date]];
+    [self identify:identity];
 }
 
 -(void) peopleSet: (NSDictionary *) data {

@@ -23,6 +23,7 @@
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties;
 
 -(void) identify: (NSString *)identity;
+-(void) signUp:(NSString *)identity;
 -(void) peopleSet: (NSDictionary *) data;
 -(void) peopleSet: (NSString *)property to:(id)object;
 -(void) peopleIncrement: (NSDictionary *) data;
