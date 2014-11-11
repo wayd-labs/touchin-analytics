@@ -38,4 +38,5 @@ Pod::Spec.new do |s|
   s.dependency 'Mixpanel'
   s.dependency 'AppsFlyer-SDK'
   s.dependency 'MobileAppTracker', '3.4.1'
+  s.dependency 'Localytics-AMP'
 end

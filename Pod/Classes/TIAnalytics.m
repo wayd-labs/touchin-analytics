@@ -11,6 +11,7 @@
 #import "MixPanel.h"
 #import "MobileAppTracker.h"
 #import "AppsFlyerTracker.h"
+#import "LocalyticsSession.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
 
@@ -31,6 +32,7 @@ NSString* flurrytoken;
 NSString* mixpaneltoken;
 NSArray* appsflyertoken;
 NSArray* mattoken;
+NSString* localyticstoken;
 
 NSMutableDictionary* timedEvents;
 
@@ -50,6 +52,10 @@ NSMutableDictionary* timedEvents;
 
 -(BOOL) is_appsflyer {
     return [appsflyertoken count] == 2;
+}
+
+-(BOOL) is_localytics {
+    return [localyticstoken length] != 0;
 }
 
 - (NSString*) isoNowDate {
@@ -95,6 +101,11 @@ NSMutableDictionary* timedEvents;
         NSLog(@"AppsFlyer initialized");
     }
 
+    if ([tokens objectForKey:@"localytics"]) {
+        localyticstoken = [tokens objectForKey:@"localytics"];
+        [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
+        NSLog(@"Localytics initialized");
+    }
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
@@ -122,8 +133,10 @@ NSMutableDictionary* timedEvents;
     if (self.is_flurry) {
         [Flurry logEvent:name withParameters:properties];
     }
+    if (self.is_localytics) {
+        [[LocalyticsSession shared] tagEvent:name attributes:properties];
+    }
     NSLog(@"ANALYTICS: %@, %@", name, properties);
-
 }
 
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties {
