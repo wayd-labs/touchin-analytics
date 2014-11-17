@@ -24,6 +24,9 @@
 
 -(void) identify: (NSString *)identity;
 -(void) signUp:(NSString *)identity;
+
+-(void) registerSuperProperties: (NSDictionary *) properties;
+
 -(void) peopleSet: (NSDictionary *) data;
 -(void) peopleSet: (NSString *)property to:(id)object;
 -(void) peopleIncrement: (NSDictionary *) data;

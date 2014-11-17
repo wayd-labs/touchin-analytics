@@ -195,6 +195,12 @@ NSMutableDictionary* timedEvents;
     [self identify:identity];
 }
 
+-(void) registerSuperProperties: (NSDictionary *) properties {
+    if ([self is_mixpanel]) {
+        [Mixpanel.sharedInstance registerSuperProperties:properties];
+    }
+}
+
 -(void) peopleSet: (NSDictionary *) data {
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance.people set:data];
