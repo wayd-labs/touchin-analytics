@@ -167,9 +167,9 @@ NSMutableDictionary* timedEvents;
     NSMutableDictionary *fullProperties = [NSMutableDictionary new];
     [fullProperties addEntriesFromDictionary:timedEvents[name]];
     [fullProperties addEntriesFromDictionary:addproperties];
-    fullProperties[@"time"] = timeformatted;
+    fullProperties[@"duration"] = timeformatted;
     [timedEvents removeObjectForKey:name];
-    [self trackEvent:[name stringByAppendingString:@"_end"] properties:fullProperties];
+    [self trackEvent:[name stringByAppendingString:@"_finished"] properties:fullProperties];
 }
 
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties {
