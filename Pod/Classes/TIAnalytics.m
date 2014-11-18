@@ -162,12 +162,13 @@ NSMutableDictionary* timedEvents;
     } else {
         time = [[NSDate date] timeIntervalSinceDate:timedEvents[name][@"time"]];
     }
-    NSString *timeformatted = [NSString stringWithFormat:@"%f", time];
+    NSString *timeformatted = [NSString stringWithFormat:@"%.1f", time];
     NSLog(@"ANALYTICS timed event end %@ %@", name, timeformatted);
     NSMutableDictionary *fullProperties = [NSMutableDictionary new];
     [fullProperties addEntriesFromDictionary:timedEvents[name]];
     [fullProperties addEntriesFromDictionary:addproperties];
     fullProperties[@"duration"] = timeformatted;
+    [fullProperties removeObjectForKey:@"time"];
     [timedEvents removeObjectForKey:name];
     [self trackEvent:[name stringByAppendingString:@"_finished"] properties:fullProperties];
 }
