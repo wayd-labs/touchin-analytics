@@ -14,6 +14,9 @@
 #import "LocalyticsSession.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
+#import <GAI.h>
+#import <GAIDictionaryBuilder.h>
+#import <GAIFields.h>
 
 @implementation TIAnalytics
 
@@ -33,6 +36,7 @@ NSString* mixpaneltoken;
 NSArray* appsflyertoken;
 NSArray* mattoken;
 NSString* localyticstoken;
+NSString* gatoken;
 
 NSMutableDictionary* timedEvents;
 
@@ -56,6 +60,10 @@ NSMutableDictionary* timedEvents;
 
 -(BOOL) is_localytics {
     return [localyticstoken length] != 0;
+}
+
+-(BOOL) is_ga {
+    return [gatoken length] != 0;
 }
 
 - (NSString*) isoNowDate {
@@ -106,6 +114,13 @@ NSMutableDictionary* timedEvents;
         [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
         NSLog(@"Localytics initialized");
     }
+    
+    if ([tokens objectForKey:@"google-analytics"]) {
+        gatoken = [tokens objectForKey:@"google-analytics"];
+        [[GAI sharedInstance] trackerWithTrackingId:gatoken];
+        NSLog(@"Google Analytics initialized");
+    }
+    
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
@@ -119,6 +134,25 @@ NSMutableDictionary* timedEvents;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidBecomeActive)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+-(void) trackScreen:(NSString *) name {
+    [self trackScreen:name objectId:nil];
+}
+
+-(void) trackScreen:(NSString *) name objectId:(NSString *) objectId {
+    if (self.is_ga) {
+        id tracker = [[GAI sharedInstance] defaultTracker];
+        [tracker set:kGAIScreenName value:name];
+        [tracker send:[[GAIDictionaryBuilder createAppView] build]];
+    }
+    if (self.is_localytics) {
+        [[LocalyticsSession shared] tagScreen:name];
+        //Should we also send an Event?
+    }
+    
+    [self trackEvent:[name stringByAppendingString:@"_SHOWN"] properties:objectId ? @{@"objectId": objectId}: nil];
+    NSLog(@"ANALYTICS SCREEN: %@, %@", name, objectId);
 }
 
 -(void) trackEvent:(NSString *) name {
