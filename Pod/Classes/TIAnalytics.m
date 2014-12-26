@@ -112,6 +112,7 @@ NSMutableDictionary* timedEvents;
     if ([tokens objectForKey:@"localytics"]) {
         localyticstoken = [tokens objectForKey:@"localytics"];
         [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
+        [[LocalyticsSession shared] resume];
         NSLog(@"Localytics initialized");
     }
     
