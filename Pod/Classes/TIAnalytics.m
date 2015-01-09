@@ -14,9 +14,6 @@
 #import "LocalyticsSession.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
-#import <GAI.h>
-#import <GAIDictionaryBuilder.h>
-#import <GAIFields.h>
 
 @implementation TIAnalytics
 
