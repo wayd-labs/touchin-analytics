@@ -217,6 +217,8 @@ NSMutableDictionary* timedEvents;
     }
 }
 
+NSString* UD_PREFIX = @"TIAnalytics";
+
 -(void) peopleSet: (NSDictionary *) data {
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance.people set:data];
@@ -228,15 +230,37 @@ NSMutableDictionary* timedEvents;
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance.people set:property to:object];
     }
+    [[NSUserDefaults standardUserDefaults] setObject:object forKey:[UD_PREFIX stringByAppendingString:property]];
     NSLog(@"ANALYTICS PeopleSet %@ to %@", property, object);
 }
 
--(void) peopleIncrement: (NSDictionary *) data {
+-(void) peopleIncrement:(NSString *)property by:(NSNumber *)amount {
     if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance.people increment:data];        
+        [Mixpanel.sharedInstance.people increment:property by:amount];
     }
-    NSLog(@"ANALYTICS People Increment: %@", data);
+    NSObject* was = [[NSUserDefaults standardUserDefaults] objectForKey:[UD_PREFIX stringByAppendingString:property]];
+    NSInteger prev = 0;
+    if ((was != nil) && [was isKindOfClass:[NSNumber class]]) {
+        prev = ((NSNumber*) was).intValue;
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:prev+1] forKey:[UD_PREFIX stringByAppendingString:property]];
+    NSLog(@"ANALYTICS People Increment: %@ by %@ (was %ld)", property, amount, (long)prev);
 }
+
+-(id) peopleGet:(NSString*) property {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[UD_PREFIX stringByAppendingString:property]];
+}
+
+-(NSInteger) peopleGetInteger:(NSString*) property {
+    NSObject* obj = [self peopleGet:property];
+    if ((obj == nil) || ![obj isKindOfClass:[NSNumber class]]) {
+        return 0;
+    }
+    NSInteger val = [((NSNumber*) obj) integerValue];
+    NSLog(@"ANALYTICS People Get: %@ = %ld)", property, val);
+    return val;
+}
+
 
 - (void)applicationDidBecomeActive
 {
