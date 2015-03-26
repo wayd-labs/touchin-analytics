@@ -14,7 +14,7 @@
 #import "LocalyticsSession.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @implementation TIAnalytics
 
@@ -161,7 +161,7 @@ NSMutableDictionary* timedEvents;
         [[LocalyticsSession shared] tagEvent:name attributes:properties];
     }
     if (self.is_facebook) {
-        [FBAppEvents logEvent:name parameters:properties];
+        [FBSDKAppEvents logEvent:name parameters:properties];
     }
     NSLog(@"ANALYTICS: %@, %@", name, properties);
 }
@@ -285,7 +285,7 @@ NSString* UD_PREFIX = @"TIAnalytics";
         [[AppsFlyerTracker sharedTracker] trackAppLaunch];
     }
     if (self.is_facebook) {
-        [FBAppEvents activateApp];
+        [FBSDKAppEvents activateApp];
     }
     [self trackEvent:@"SESSION_START"];
 }

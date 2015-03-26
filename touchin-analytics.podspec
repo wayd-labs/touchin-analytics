@@ -39,5 +39,5 @@ Pod::Spec.new do |s|
   s.dependency 'AppsFlyer-SDK'
   s.dependency 'MobileAppTracker', '3.4.1'
   s.dependency 'Localytics-AMP'
-  s.dependency 'Facebook-iOS-SDK', '~>3'
+  s.dependency 'Facebook-iOS-SDK', '~>4'
 end
