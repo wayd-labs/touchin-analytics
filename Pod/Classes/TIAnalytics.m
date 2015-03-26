@@ -14,6 +14,7 @@
 #import "LocalyticsSession.h"
 #import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 @implementation TIAnalytics
 
@@ -33,6 +34,7 @@ NSString* mixpaneltoken;
 NSArray* appsflyertoken;
 NSArray* mattoken;
 NSString* localyticstoken;
+BOOL facebook;
 
 NSMutableDictionary* timedEvents;
 
@@ -56,6 +58,10 @@ NSMutableDictionary* timedEvents;
 
 -(BOOL) is_localytics {
     return [localyticstoken length] != 0;
+}
+
+-(BOOL) is_facebook {
+  return facebook;
 }
 
 - (NSString*) isoNowDate {
@@ -107,7 +113,10 @@ NSMutableDictionary* timedEvents;
         [[LocalyticsSession shared] resume];
         NSLog(@"Localytics initialized");
     }
-    
+  
+    if ([tokens objectForKey:@"facebook"]) {
+      facebook = YES;
+    }
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
@@ -150,6 +159,9 @@ NSMutableDictionary* timedEvents;
     }
     if (self.is_localytics) {
         [[LocalyticsSession shared] tagEvent:name attributes:properties];
+    }
+    if (self.is_facebook) {
+        [FBAppEvents logEvent:name parameters:properties];
     }
     NSLog(@"ANALYTICS: %@, %@", name, properties);
 }
@@ -271,6 +283,9 @@ NSString* UD_PREFIX = @"TIAnalytics";
     if (self.is_appsflyer) {
         // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
         [[AppsFlyerTracker sharedTracker] trackAppLaunch];
+    }
+    if (self.is_facebook) {
+        [FBAppEvents activateApp];
     }
     [self trackEvent:@"SESSION_START"];
 }
