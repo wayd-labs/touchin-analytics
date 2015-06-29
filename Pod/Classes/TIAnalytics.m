@@ -149,21 +149,35 @@ NSMutableDictionary* timedEvents;
     [self trackEvent:name properties:nil];
 }
 
+
+-(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers:(bool)sendToTrackers {
+  if (self.is_mixpanel) {
+    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+    [mixpanel track:name properties:properties];
+  }
+  if (self.is_flurry) {
+    [Flurry logEvent:name withParameters:properties];
+  }
+  if (self.is_localytics) {
+    [[LocalyticsSession shared] tagEvent:name attributes:properties];
+  }
+  if (self.is_facebook) {
+    [FBSDKAppEvents logEvent:name parameters:properties];
+  }
+  
+  if (sendToTrackers) {
+    if (self.is_mat) {
+      [MobileAppTracker measureAction:name];
+    }
+    if (self.is_appsflyer) {
+      [[AppsFlyerTracker sharedTracker] trackEvent:name withValues:properties];
+    }
+  }
+  NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
+}
+
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties {
-    if (self.is_mixpanel) {
-        Mixpanel *mixpanel = [Mixpanel sharedInstance];
-        [mixpanel track:name properties:properties];
-    }
-    if (self.is_flurry) {
-        [Flurry logEvent:name withParameters:properties];
-    }
-    if (self.is_localytics) {
-        [[LocalyticsSession shared] tagEvent:name attributes:properties];
-    }
-    if (self.is_facebook) {
-        [FBSDKAppEvents logEvent:name parameters:properties];
-    }
-    NSLog(@"ANALYTICS: %@, %@", name, properties);
+  [self trackEvent:name properties:properties sendToTrackers:false];
 }
 
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties {

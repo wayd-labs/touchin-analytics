@@ -10,6 +10,12 @@
 
 @interface TIAnalytics : NSObject
 
+typedef enum {
+  TrackerEventClassCustom,
+  TrackerEventClassRegistration,
+  TrackerEventClassLogin,
+} TrackerEventClass;
+
 + (TIAnalytics *) shared;
 
 -(void) initialize: (NSDictionary*) tokens;
@@ -19,6 +25,8 @@
 
 -(void) trackEvent: (NSString *) name;
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties;
+
+-(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers: (bool) sendToTrackers;
 
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties;
 -(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) properties;
