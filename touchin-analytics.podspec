@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "0.5.1"
+  s.version          = "0.6.0"
   s.summary          = "A short description of touchin-analytics."
   s.description      = <<-DESC
                        An optional longer description of touchin-analytics

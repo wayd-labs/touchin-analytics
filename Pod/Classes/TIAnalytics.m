@@ -221,6 +221,20 @@ NSMutableDictionary* timedEvents;
     [self trackEvent:@"ERROR" properties:props];
 }
 
+-(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
+  //TODO: make MKProduct extension, to just trackPurchaseWithItemSKU: (NSString*) sku;
+  if (self.is_mixpanel) {
+    MATEventItem *item1 = [MATEventItem eventItemWithName:name unitPrice:amount.floatValue quantity:1];
+    NSArray *eventItems = @[item1];
+
+    [MobileAppTracker measureAction:@"purchase"
+                         eventItems:eventItems
+                      revenueAmount:amount.floatValue
+                       currencyCode:currency];
+  }
+  [self trackEvent:@"PURCHASE" properties:@{@"amount": amount, @"currency": currency, @"name": name}];
+}
+
 -(void) identify: (NSString *)identity {
     if (self.is_mixpanel) {
         [Mixpanel.sharedInstance identify:identity];

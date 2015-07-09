@@ -33,6 +33,8 @@ typedef enum {
 
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties;
 
+-(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency;
+
 -(void) identify: (NSString *)identity;
 -(void) signUp:(NSString *)identity;
 
