@@ -7,14 +7,16 @@
 //
 
 #import "TIAnalytics.h"
-#import "Flurry.h"
-#import "MixPanel.h"
-#import "MobileAppTracker.h"
-#import "AppsFlyerTracker.h"
-#import "LocalyticsSession.h"
-#import <AdSupport/AdSupport.h>
+
+//#import "MixPanel.h"
+//#import "MobileAppTracker.h"
+//#import "AppsFlyerTracker.h"
+//#import "LocalyticsSession.h"
+//#import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
+//#import <FBSDKCoreKit/FBSDKCoreKit.h>
+
+#import "TIAnalyticsProviders.h"
 
 @implementation TIAnalytics
 
@@ -35,6 +37,8 @@ NSArray* appsflyertoken;
 NSArray* mattoken;
 NSString* localyticstoken;
 BOOL facebook;
+
+NSMutableArray* providers;
 
 NSMutableDictionary* timedEvents;
 
@@ -77,46 +81,66 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) initialize: (NSDictionary*) tokens {
-    if ([tokens objectForKey:@"flurry"]) {
-        flurrytoken = [tokens objectForKey:@"flurry"];
-        [Flurry setCrashReportingEnabled:NO];
-        [Flurry startSession:flurrytoken];
-        NSLog(@"Flurry initialized");
-    }
-    
-    if ([tokens objectForKey:@"mixpanel"]) {
-        mixpaneltoken = [tokens objectForKey:@"mixpanel"];
-        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
-        NSLog(@"Mixpanel initialized");
-    }
-    
-    if ([tokens objectForKey:@"mat"]) {
-        mattoken = [tokens objectForKey:@"mat"];
-        [MobileAppTracker initializeWithMATAdvertiserId:mattoken[0]
-                                       MATConversionKey:mattoken[1]];
-        [MobileAppTracker setAppleAdvertisingIdentifier:[[ASIdentifierManager sharedManager] advertisingIdentifier]
-                         advertisingTrackingEnabled:[[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]];
-        NSLog(@"MAT initialized");
-    }
-    
-    if ([tokens objectForKey:@"appsflyer"]) {
-        appsflyertoken = [tokens objectForKey:@"appsflyer"];
-        [AppsFlyerTracker sharedTracker].appsFlyerDevKey = appsflyertoken[0];
-        [AppsFlyerTracker sharedTracker].appleAppID = appsflyertoken[1];
-        [AppsFlyerTracker sharedTracker].isHTTPS = YES;
-        NSLog(@"AppsFlyer initialized");
-    }
+//    if ([tokens objectForKey:@"flurry"]) {
+//        flurrytoken = [tokens objectForKey:@"flurry"];
+//        [Flurry setCrashReportingEnabled:NO];
+//        [Flurry startSession:flurrytoken];
+//        NSLog(@"Flurry initialized");
+//    }
+//    
+//    if ([tokens objectForKey:@"mixpanel"]) {
+//        mixpaneltoken = [tokens objectForKey:@"mixpanel"];
+//        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
+//        NSLog(@"Mixpanel initialized");
+//    }
+//    
+//    if ([tokens objectForKey:@"mat"]) {
+//        mattoken = [tokens objectForKey:@"mat"];
+//        [MobileAppTracker initializeWithMATAdvertiserId:mattoken[0]
+//                                       MATConversionKey:mattoken[1]];
+//        [MobileAppTracker setAppleAdvertisingIdentifier:[[ASIdentifierManager sharedManager] advertisingIdentifier]
+//                         advertisingTrackingEnabled:[[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]];
+//        NSLog(@"MAT initialized");
+//    }
+//    
+//    if ([tokens objectForKey:@"appsflyer"]) {
+//        appsflyertoken = [tokens objectForKey:@"appsflyer"];
+//        [AppsFlyerTracker sharedTracker].appsFlyerDevKey = appsflyertoken[0];
+//        [AppsFlyerTracker sharedTracker].appleAppID = appsflyertoken[1];
+//        [AppsFlyerTracker sharedTracker].isHTTPS = YES;
+//        NSLog(@"AppsFlyer initialized");
+//    }
+//
+//    if ([tokens objectForKey:@"localytics"]) {
+//        localyticstoken = [tokens objectForKey:@"localytics"];
+//        [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
+//        [[LocalyticsSession shared] resume];
+//        NSLog(@"Localytics initialized");
+//    }
+//  
+//    if ([tokens objectForKey:@"facebook"]) {
+//      facebook = YES;
+//    }
 
-    if ([tokens objectForKey:@"localytics"]) {
-        localyticstoken = [tokens objectForKey:@"localytics"];
-        [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
-        [[LocalyticsSession shared] resume];
-        NSLog(@"Localytics initialized");
-    }
-  
-    if ([tokens objectForKey:@"facebook"]) {
-      facebook = YES;
-    }
+    providers = [NSMutableArray new];
+
+#if TIA_FLURRY_EXISTS
+    [providers addObject:[[TIFlurryProvider new] initialize:tokens]];
+#endif
+
+#if TIA_LOCALYTICS_EXISTS
+    [providers addObject:[[TILocalyticsProvider new] initialize:tokens]];
+    NSLog(@"Locatytics initialized");
+#endif
+
+#if TIA_AMPLITUDE_EXISTS
+    [providers addObject:[[TIAmplitudeProvider new] initialize:tokens]];
+    NSLog(@"Amplitude initialized");
+#endif
+
+    NSString *reason = [NSString stringWithFormat:@"Not all analytics tokens (tokens: %lu, initialized: %d) used, check pods and names", (unsigned long)[tokens count], [providers count]];
+    NSAssert([providers count] == [tokens count], reason);
+
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSDictionary *datetimeprop = @{@"date": self.isoNowDate, @"time": self.nowTime};
@@ -137,10 +161,6 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) trackScreen:(NSString *) name objectId:(NSString *) objectId {
-    if (self.is_localytics) {
-        [[LocalyticsSession shared] tagScreen:name];
-    }
-    
     [self trackEvent:[name stringByAppendingString:@"_SHOWN"] properties:objectId ? @{@"objectId": objectId}: nil];
     NSLog(@"ANALYTICS SCREEN: %@, %@", name, objectId);
 }
@@ -149,31 +169,27 @@ NSMutableDictionary* timedEvents;
     [self trackEvent:name properties:nil];
 }
 
-
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers:(bool)sendToTrackers {
-  if (self.is_mixpanel) {
-    Mixpanel *mixpanel = [Mixpanel sharedInstance];
-    [mixpanel track:name properties:properties];
-  }
-  if (self.is_flurry) {
-    [Flurry logEvent:name withParameters:properties];
-  }
-  if (self.is_localytics) {
-    [[LocalyticsSession shared] tagEvent:name attributes:properties];
-  }
-  if (self.is_facebook) {
-    [FBSDKAppEvents logEvent:name parameters:properties];
-  }
-  
-  if (sendToTrackers) {
-    if (self.is_mat) {
-      [MobileAppTracker measureAction:name];
+    for (int i=0; i < [providers count]; i++) {
+      [providers[i] trackEvent:name properties:properties sendToTrackers:sendToTrackers];
     }
-    if (self.is_appsflyer) {
-      [[AppsFlyerTracker sharedTracker] trackEvent:name withValues:properties];
-    }
-  }
-  NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
+//  if (self.is_mixpanel) {
+//    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+//    [mixpanel track:name properties:properties];
+//  }
+//  if (self.is_facebook) {
+//    [FBSDKAppEvents logEvent:name parameters:properties];
+//  }
+//  
+//  if (sendToTrackers) {
+//    if (self.is_mat) {
+//      [MobileAppTracker measureAction:name];
+//    }
+//    if (self.is_appsflyer) {
+//      [[AppsFlyerTracker sharedTracker] trackEvent:name withValues:properties];
+//    }
+//  }
+    NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
 }
 
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties {
@@ -224,60 +240,60 @@ NSMutableDictionary* timedEvents;
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
   //TODO: make MKProduct extension, to just trackPurchaseWithItemSKU: (NSString*) sku;
   if (self.is_mixpanel) {
-    MATEventItem *item1 = [MATEventItem eventItemWithName:name unitPrice:amount.floatValue quantity:1];
-    NSArray *eventItems = @[item1];
+//    MATEventItem *item1 = [MATEventItem eventItemWithName:name unitPrice:amount.floatValue quantity:1];
+//    NSArray *eventItems = @[item1];
 
-    [MobileAppTracker measureAction:@"purchase"
-                         eventItems:eventItems
-                      revenueAmount:amount.floatValue
-                       currencyCode:currency];
+//    [MobileAppTracker measureAction:@"purchase"
+//                         eventItems:eventItems
+//                      revenueAmount:amount.floatValue
+//                       currencyCode:currency];
   }
   [self trackEvent:@"PURCHASE" properties:@{@"amount": amount, @"currency": currency, @"name": name}];
 }
 
 -(void) identify: (NSString *)identity {
-    if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance identify:identity];
-    }
+//    if (self.is_mixpanel) {
+//        [Mixpanel.sharedInstance identify:identity];
+//    }
     [self peopleSet:@"last_login" to:[NSDate date]];
     NSLog(@"ANALYTICS IDENTIFY: %@", identity);
 }
 
 -(void) signUp:(NSString *)identity {
-    if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance createAlias:identity forDistinctID:Mixpanel.sharedInstance.distinctId];
-    }    
+//    if (self.is_mixpanel) {
+//        [Mixpanel.sharedInstance createAlias:identity forDistinctID:Mixpanel.sharedInstance.distinctId];
+//    }    
     [self peopleSet:@"sign_up" to:[NSDate date]];
     [self identify:identity];
 }
 
 -(void) registerSuperProperties: (NSDictionary *) properties {
-    if ([self is_mixpanel]) {
-        [Mixpanel.sharedInstance registerSuperProperties:properties];
-    }
+//    if ([self is_mixpanel]) {
+//        [Mixpanel.sharedInstance registerSuperProperties:properties];
+//    }
 }
 
 NSString* UD_PREFIX = @"TIAnalytics";
 
 -(void) peopleSet: (NSDictionary *) data {
-    if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance.people set:data];
-    }
+//    if (self.is_mixpanel) {
+//        [Mixpanel.sharedInstance.people set:data];
+//    }
     NSLog(@"ANALYTICS PeopleSet: %@", data);
 }
 
 -(void) peopleSet: (NSString *)property to:(id)object {
-    if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance.people set:property to:object];
-    }
+//    if (self.is_mixpanel) {
+//        [Mixpanel.sharedInstance.people set:property to:object];
+//    }
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:[UD_PREFIX stringByAppendingString:property]];
     NSLog(@"ANALYTICS PeopleSet %@ to %@", property, object);
 }
 
 -(void) peopleIncrement:(NSString *)property by:(NSNumber *)amount {
-    if (self.is_mixpanel) {
-        [Mixpanel.sharedInstance.people increment:property by:amount];
-    }
+//    if (self.is_mixpanel) {
+//        [Mixpanel.sharedInstance.people increment:property by:amount];
+//    }
     NSObject* was = [[NSUserDefaults standardUserDefaults] objectForKey:[UD_PREFIX stringByAppendingString:property]];
     NSInteger prev = 0;
     if ((was != nil) && [was isKindOfClass:[NSNumber class]]) {
@@ -304,25 +320,25 @@ NSString* UD_PREFIX = @"TIAnalytics";
 
 - (void)applicationDidBecomeActive
 {
-    if (self.is_mat) {
-        // MAT will not function without the measureSession call included
-        [MobileAppTracker measureSession];
-    }
-    if (self.is_appsflyer) {
-        // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
-        [[AppsFlyerTracker sharedTracker] trackAppLaunch];
-    }
-    if (self.is_facebook) {
-        [FBSDKAppEvents activateApp];
-    }
+//    if (self.is_mat) {
+//        // MAT will not function without the measureSession call included
+//        [MobileAppTracker measureSession];
+//    }
+//    if (self.is_appsflyer) {
+//        // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
+//        [[AppsFlyerTracker sharedTracker] trackAppLaunch];
+//    }
+//    if (self.is_facebook) {
+//        [FBSDKAppEvents activateApp];
+//    }
     [self trackEvent:@"SESSION_START"];
 }
 
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication
 {
-    if (self.is_mat) {
-        [MobileAppTracker applicationDidOpenURL:[url absoluteString] sourceApplication:sourceApplication];
-    }
+//    if (self.is_mat) {
+//        [MobileAppTracker applicationDidOpenURL:[url absoluteString] sourceApplication:sourceApplication];
+//    }
 }
 
 - (void) dealloc
