@@ -1,18 +1,31 @@
 #import "TILocalyticsProvider.h"
-#import "LocalyticsSession.h"
+#import "Localytics.h"
 
 @implementation TILocalyticsProvider
 
-
 #if TIA_LOCALYTICS_EXISTS
--(BOOL) initialize: (NSArray *) tokens {
+-(id) initialize: (NSDictionary *) tokens {
+    NSString* localyticstoken = [tokens objectForKey:@"localytics"];
+    [Localytics autoIntegrate:localyticstoken launchOptions:nil];
+    NSLog(@"Localytics initialized");
+    return self;
 }
 
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers: (bool) sendToTrackers {
+    [Localytics tagEvent:name attributes:properties];
 }
 
--(void) trackScreen {
-//  [[LocalyticsSession shared] tagScreen:name];
+-(void) trackScreen:(NSString *) name objectId:(NSString *) objectId {
+    [Localytics tagScreen:name];
+}
+
+-(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
+    NSDictionary *attributes = @{
+        @"name": name,
+        @"amount": amount,
+        @"currency": currency
+    };
+    [Localytics tagEvent:[NSString stringWithFormat:@"BUY_%@", name] attributes: attributes customerValueIncrease:amount];
 }
 #endif
 

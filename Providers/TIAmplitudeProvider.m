@@ -4,10 +4,10 @@
 @implementation TIAmplitudeProvider
 
 #if TIA_AMPLITUDE_EXISTS
--(BOOL) initialize: (NSDictionary *) tokens {
+-(id) initialize: (NSDictionary *) tokens {
   NSString* token = [tokens objectForKey:@"amplitude"];
   [[Amplitude instance] initializeApiKey:token];
-  return @YES;
+  return self;
 }
 
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers: (bool) sendToTrackers {
@@ -22,6 +22,7 @@
   //FIXME currency use
   [[Amplitude instance] logRevenue:name quantity:1 price:amount];
 }
+//TODO people set
 #endif
 
 @end

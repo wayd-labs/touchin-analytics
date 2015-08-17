@@ -11,7 +11,6 @@
 //#import "MixPanel.h"
 //#import "MobileAppTracker.h"
 //#import "AppsFlyerTracker.h"
-//#import "LocalyticsSession.h"
 //#import <AdSupport/AdSupport.h>
 #import <UIKit/UIKit.h>
 //#import <FBSDKCoreKit/FBSDKCoreKit.h>
@@ -35,7 +34,6 @@ NSString* flurrytoken;
 NSString* mixpaneltoken;
 NSArray* appsflyertoken;
 NSArray* mattoken;
-NSString* localyticstoken;
 BOOL facebook;
 
 NSMutableArray* providers;
@@ -58,10 +56,6 @@ NSMutableDictionary* timedEvents;
 
 -(BOOL) is_appsflyer {
     return [appsflyertoken count] == 2;
-}
-
--(BOOL) is_localytics {
-    return [localyticstoken length] != 0;
 }
 
 -(BOOL) is_facebook {
@@ -111,13 +105,6 @@ NSMutableDictionary* timedEvents;
 //        NSLog(@"AppsFlyer initialized");
 //    }
 //
-//    if ([tokens objectForKey:@"localytics"]) {
-//        localyticstoken = [tokens objectForKey:@"localytics"];
-//        [[LocalyticsSession shared] integrateLocalytics:localyticstoken launchOptions:nil];
-//        [[LocalyticsSession shared] resume];
-//        NSLog(@"Localytics initialized");
-//    }
-//  
 //    if ([tokens objectForKey:@"facebook"]) {
 //      facebook = YES;
 //    }
@@ -137,9 +124,11 @@ NSMutableDictionary* timedEvents;
     [providers addObject:[[TIAmplitudeProvider new] initialize:tokens]];
     NSLog(@"Amplitude initialized");
 #endif
-
-    NSString *reason = [NSString stringWithFormat:@"Not all analytics tokens (tokens: %lu, initialized: %d) used, check pods and names", (unsigned long)[tokens count], [providers count]];
-    NSAssert([providers count] == [tokens count], reason);
+    
+    if ([providers count] != [tokens count]) {
+        [NSException raise:@"TIAnalytics. Not all tokens initialazied." format:@"Not all analytics tokens (tokens: %lu, initialized: %lu) used, check pods and names",
+            (unsigned long)[tokens count], (unsigned long)[providers count]];
+    }
 
     //track lauch and first launch
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
@@ -331,7 +320,6 @@ NSString* UD_PREFIX = @"TIAnalytics";
 //    if (self.is_facebook) {
 //        [FBSDKAppEvents activateApp];
 //    }
-    [self trackEvent:@"SESSION_START"];
 }
 
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication
