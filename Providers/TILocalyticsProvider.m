@@ -24,7 +24,7 @@
         @"amount": amount,
         @"currency": currency
     };
-    [Localytics tagEvent:[NSString stringWithFormat:@"BUY_%@", name] attributes: attributes customerValueIncrease:amount];
+[Localytics tagEvent:[NSString stringWithFormat:@"BUY_%@", name] attributes: attributes customerValueIncrease:amount];
 }
 #endif
 

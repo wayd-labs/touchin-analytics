@@ -27,7 +27,12 @@
 }
 
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
-  
+    NSDictionary *attributes = @{
+                                 @"name": name,
+                                 @"amount": amount,
+                                 @"currency": currency
+    };
+    [self trackEvent:[NSString stringWithFormat:@"PURCHASE_%@", name] properties:attributes sendToTrackers:true];
 }
 
 -(void) identify: (NSString *)identity {

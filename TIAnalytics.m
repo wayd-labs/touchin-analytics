@@ -9,12 +9,6 @@
 #import "TIAnalytics.h"
 
 //#import "MixPanel.h"
-//#import "MobileAppTracker.h"
-//#import "AppsFlyerTracker.h"
-//#import <AdSupport/AdSupport.h>
-#import <UIKit/UIKit.h>
-//#import <FBSDKCoreKit/FBSDKCoreKit.h>
-
 #import "TIAnalyticsProviders.h"
 
 @implementation TIAnalytics
@@ -30,37 +24,8 @@
     return sharedInstance;
 }
 
-NSString* flurrytoken;
-NSString* mixpaneltoken;
-NSArray* appsflyertoken;
-NSArray* mattoken;
-BOOL facebook;
-
 NSMutableArray* providers;
-
 NSMutableDictionary* timedEvents;
-
-
--(BOOL) is_mixpanel {
-    return [mixpaneltoken length] != 0;
-}
-
--(BOOL) is_flurry {
-    return [flurrytoken length] != 0;
-}
-
--(BOOL) is_mat {
-//    return [mat_advertiserid length] && [mat_conversionkey length];
-    return [mattoken count] == 2;
-}
-
--(BOOL) is_appsflyer {
-    return [appsflyertoken count] == 2;
-}
-
--(BOOL) is_facebook {
-  return facebook;
-}
 
 - (NSString*) isoNowDate {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -81,14 +46,6 @@ NSMutableDictionary* timedEvents;
 //        NSLog(@"Mixpanel initialized");
 //    }
 
-//    if ([tokens objectForKey:@"appsflyer"]) {
-//        appsflyertoken = [tokens objectForKey:@"appsflyer"];
-//        [AppsFlyerTracker sharedTracker].appsFlyerDevKey = appsflyertoken[0];
-//        [AppsFlyerTracker sharedTracker].appleAppID = appsflyertoken[1];
-//        [AppsFlyerTracker sharedTracker].isHTTPS = YES;
-//        NSLog(@"AppsFlyer initialized");
-//    }
-//
     providers = [NSMutableArray new];
 
 #if TIA_FLURRY_EXISTS
@@ -109,7 +66,12 @@ NSMutableDictionary* timedEvents;
     [providers addObject:[[TITuneProvider new] initialize:tokens]];
     NSLog(@"Tune initialized");
 #endif
-    
+
+#if TIA_APPSFLYER_EXISTS
+    [providers addObject:[[TIAppsFlyerProvider new] initialize:tokens]];
+    NSLog(@"AppsFlyer initialized");
+#endif
+
     if ([providers count] != [tokens count]) {
         [NSException raise:@"TIAnalytics. Not all tokens initialazied." format:@"Not all analytics tokens (tokens: %lu, initialized: %lu) used, check pods and names",
             (unsigned long)[tokens count], (unsigned long)[providers count]];
@@ -150,11 +112,6 @@ NSMutableDictionary* timedEvents;
 //  if (self.is_mixpanel) {
 //    Mixpanel *mixpanel = [Mixpanel sharedInstance];
 //    [mixpanel track:name properties:properties];
-//  }
-//  if (sendToTrackers) {
-//    if (self.is_appsflyer) {
-//      [[AppsFlyerTracker sharedTracker] trackEvent:name withValues:properties];
-//    }
 //  }
     NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
 }
@@ -276,17 +233,11 @@ NSString* UD_PREFIX = @"TIAnalytics";
     return val;
 }
 
-
 - (void)applicationDidBecomeActive
 {
     for (int i=0; i < [providers count]; i++) {
         [providers[i] applicationDidBecomeActive];
     }
-    
-//    if (self.is_appsflyer) {
-//        // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
-//        [[AppsFlyerTracker sharedTracker] trackAppLaunch];
-//    }
 }
 
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication

@@ -13,3 +13,7 @@
 #if TIA_TUNE_EXISTS
 #import "TITuneProvider.h"
 #endif
+
+#if TIA_APPSFLYER_EXISTS
+#import "TIAppsFlyerProvider.h"
+#endif
