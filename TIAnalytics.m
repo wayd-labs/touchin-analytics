@@ -75,28 +75,12 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) initialize: (NSDictionary*) tokens {
-//    if ([tokens objectForKey:@"flurry"]) {
-//        flurrytoken = [tokens objectForKey:@"flurry"];
-//        [Flurry setCrashReportingEnabled:NO];
-//        [Flurry startSession:flurrytoken];
-//        NSLog(@"Flurry initialized");
-//    }
-//    
 //    if ([tokens objectForKey:@"mixpanel"]) {
 //        mixpaneltoken = [tokens objectForKey:@"mixpanel"];
 //        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
 //        NSLog(@"Mixpanel initialized");
 //    }
-//    
-//    if ([tokens objectForKey:@"mat"]) {
-//        mattoken = [tokens objectForKey:@"mat"];
-//        [MobileAppTracker initializeWithMATAdvertiserId:mattoken[0]
-//                                       MATConversionKey:mattoken[1]];
-//        [MobileAppTracker setAppleAdvertisingIdentifier:[[ASIdentifierManager sharedManager] advertisingIdentifier]
-//                         advertisingTrackingEnabled:[[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]];
-//        NSLog(@"MAT initialized");
-//    }
-//    
+
 //    if ([tokens objectForKey:@"appsflyer"]) {
 //        appsflyertoken = [tokens objectForKey:@"appsflyer"];
 //        [AppsFlyerTracker sharedTracker].appsFlyerDevKey = appsflyertoken[0];
@@ -105,10 +89,6 @@ NSMutableDictionary* timedEvents;
 //        NSLog(@"AppsFlyer initialized");
 //    }
 //
-//    if ([tokens objectForKey:@"facebook"]) {
-//      facebook = YES;
-//    }
-
     providers = [NSMutableArray new];
 
 #if TIA_FLURRY_EXISTS
@@ -123,6 +103,11 @@ NSMutableDictionary* timedEvents;
 #if TIA_AMPLITUDE_EXISTS
     [providers addObject:[[TIAmplitudeProvider new] initialize:tokens]];
     NSLog(@"Amplitude initialized");
+#endif
+    
+#if TIA_TUNE_EXISTS
+    [providers addObject:[[TITuneProvider new] initialize:tokens]];
+    NSLog(@"Tune initialized");
 #endif
     
     if ([providers count] != [tokens count]) {
@@ -166,14 +151,7 @@ NSMutableDictionary* timedEvents;
 //    Mixpanel *mixpanel = [Mixpanel sharedInstance];
 //    [mixpanel track:name properties:properties];
 //  }
-//  if (self.is_facebook) {
-//    [FBSDKAppEvents logEvent:name parameters:properties];
-//  }
-//  
 //  if (sendToTrackers) {
-//    if (self.is_mat) {
-//      [MobileAppTracker measureAction:name];
-//    }
 //    if (self.is_appsflyer) {
 //      [[AppsFlyerTracker sharedTracker] trackEvent:name withValues:properties];
 //    }
@@ -227,17 +205,9 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
-  //TODO: make MKProduct extension, to just trackPurchaseWithItemSKU: (NSString*) sku;
-  if (self.is_mixpanel) {
-//    MATEventItem *item1 = [MATEventItem eventItemWithName:name unitPrice:amount.floatValue quantity:1];
-//    NSArray *eventItems = @[item1];
-
-//    [MobileAppTracker measureAction:@"purchase"
-//                         eventItems:eventItems
-//                      revenueAmount:amount.floatValue
-//                       currencyCode:currency];
-  }
-  [self trackEvent:@"PURCHASE" properties:@{@"amount": amount, @"currency": currency, @"name": name}];
+    for (int i=0; i < [providers count]; i++) {
+        [providers[i] trackPurchaseWithItemName:name amount:amount currency:currency];
+    }
 }
 
 -(void) identify: (NSString *)identity {
@@ -309,24 +279,21 @@ NSString* UD_PREFIX = @"TIAnalytics";
 
 - (void)applicationDidBecomeActive
 {
-//    if (self.is_mat) {
-//        // MAT will not function without the measureSession call included
-//        [MobileAppTracker measureSession];
-//    }
+    for (int i=0; i < [providers count]; i++) {
+        [providers[i] applicationDidBecomeActive];
+    }
+    
 //    if (self.is_appsflyer) {
 //        // Track Installs, updates & sessions(app opens) (You must include this API to enable tracking)
 //        [[AppsFlyerTracker sharedTracker] trackAppLaunch];
-//    }
-//    if (self.is_facebook) {
-//        [FBSDKAppEvents activateApp];
 //    }
 }
 
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication
 {
-//    if (self.is_mat) {
-//        [MobileAppTracker applicationDidOpenURL:[url absoluteString] sourceApplication:sourceApplication];
-//    }
+    for (int i=0; i < [providers count]; i++) {
+        [providers[i] applicationOpenUrl:url sourceApplication:sourceApplication];
+    }
 }
 
 - (void) dealloc

@@ -9,3 +9,7 @@
 #if TIA_LOCALYTICS_EXISTS
 #import "TILocalyticsProvider.h"
 #endif
+
+#if TIA_TUNE_EXISTS
+#import "TITuneProvider.h"
+#endif

@@ -7,7 +7,6 @@
 -(id) initialize: (NSDictionary *) tokens {
     NSString* localyticstoken = [tokens objectForKey:@"localytics"];
     [Localytics autoIntegrate:localyticstoken launchOptions:nil];
-    NSLog(@"Localytics initialized");
     return self;
 }
 
