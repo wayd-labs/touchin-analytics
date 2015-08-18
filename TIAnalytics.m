@@ -7,8 +7,6 @@
 //
 
 #import "TIAnalytics.h"
-
-//#import "MixPanel.h"
 #import "TIAnalyticsProviders.h"
 
 @implementation TIAnalytics
@@ -40,12 +38,6 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) initialize: (NSDictionary*) tokens {
-//    if ([tokens objectForKey:@"mixpanel"]) {
-//        mixpaneltoken = [tokens objectForKey:@"mixpanel"];
-//        [Mixpanel sharedInstanceWithToken:mixpaneltoken];
-//        NSLog(@"Mixpanel initialized");
-//    }
-
     providers = [NSMutableArray new];
 
 #if TIA_FLURRY_EXISTS
@@ -69,7 +61,16 @@ NSMutableDictionary* timedEvents;
 
 #if TIA_APPSFLYER_EXISTS
     [providers addObject:[[TIAppsFlyerProvider new] initialize:tokens]];
-    NSLog(@"AppsFlyer initialized");
+#endif
+
+#if TIA_MIXPANEL_EXISTS
+    [providers addObject:[[TIMixpanelProvider new] initialize:tokens]];
+    NSLog(@"Mixpanel initialized");
+#endif
+    
+#if TIA_ANSWERS_EXISTS
+    [providers addObject:[[TIAnswersProvider new] initialize:tokens]];
+    NSLog(@"Answers initialized");
 #endif
 
     if ([providers count] != [tokens count]) {
@@ -109,10 +110,6 @@ NSMutableDictionary* timedEvents;
     for (int i=0; i < [providers count]; i++) {
       [providers[i] trackEvent:name properties:properties sendToTrackers:sendToTrackers];
     }
-//  if (self.is_mixpanel) {
-//    Mixpanel *mixpanel = [Mixpanel sharedInstance];
-//    [mixpanel track:name properties:properties];
-//  }
     NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
 }
 
@@ -168,9 +165,6 @@ NSMutableDictionary* timedEvents;
 }
 
 -(void) identify: (NSString *)identity {
-//    if (self.is_mixpanel) {
-//        [Mixpanel.sharedInstance identify:identity];
-//    }
     [self peopleSet:@"last_login" to:[NSDate date]];
     NSLog(@"ANALYTICS IDENTIFY: %@", identity);
 }

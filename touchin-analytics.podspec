@@ -26,8 +26,10 @@ Pod::Spec.new do |s|
   appsflyer      = { :spec_name => "AppsFlyer",           :dependency => "AppsFlyer-SDK" }
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
+  mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
+  answers = { :spec_name => "Answers", :dependency => "Fabric"}
 
-  all_analytics = [localytics, flurry, amplitude, appsflyer, tune]
+  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers]
 
   s.subspec "CoreIOS" do |ss|
     ss.source_files = ['*.{h,m}', 'Providers/TIAnalyticsProviders.h']

@@ -17,3 +17,12 @@
 #if TIA_APPSFLYER_EXISTS
 #import "TIAppsFlyerProvider.h"
 #endif
+
+#if TIA_MIXPANEL_EXISTS
+#import "TIMixpanelProvider.h"
+#endif
+
+#if TIA_ANSWERS_EXISTS
+#import "TIAnswersProvider.h"
+#endif
+
