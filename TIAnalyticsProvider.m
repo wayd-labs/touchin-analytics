@@ -35,6 +35,18 @@
     [self trackEvent:[NSString stringWithFormat:@"PURCHASE_%@", name] properties:attributes sendToTrackers:true];
 }
 
+-(void) trackSignUp: (NSString*) method properties: (NSDictionary *) properties {
+  NSMutableDictionary* prop = [NSMutableDictionary dictionaryWithDictionary:properties];
+  prop[@"method"] = method;
+  [self trackEvent:@"SIGNUP" properties:prop sendToTrackers:@YES];
+}
+
+-(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties {
+  NSMutableDictionary* prop = [NSMutableDictionary dictionaryWithDictionary:properties];
+  prop[@"method"] = method;
+  [self trackEvent:@"LOGGED_IN" properties:prop sendToTrackers:@YES];
+}
+
 -(void) identify: (NSString *)identity {
   
 }

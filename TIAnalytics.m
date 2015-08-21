@@ -117,6 +117,21 @@ NSMutableDictionary* timedEvents;
   [self trackEvent:name properties:properties sendToTrackers:false];
 }
 
+-(void) trackSignUp: (NSString*) method properties: (NSDictionary *) properties {
+  for (int i=0; i < [providers count]; i++) {
+    [providers[i] trackSignUp:method properties:properties];
+  }
+  NSLog(@"#ti-analytics SIGNUP: %@, %@", method, properties);
+}
+
+-(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties {
+  for (int i=0; i < [providers count]; i++) {
+    [providers[i] trackLogin:method properties:properties];
+  }
+  NSLog(@"#ti-analytics LOGGEDIN: %@, %@", method, properties);
+}
+
+
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties {
     if (!timedEvents) {
         timedEvents = [NSMutableDictionary new];

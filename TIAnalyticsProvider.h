@@ -20,6 +20,9 @@
 
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency;
 
+-(void) trackSignUp: (NSString*) method properties: (NSDictionary *) properties;
+-(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties;
+
 -(void) identify: (NSString *)identity;
 -(void) signUp:(NSString *)identity;
 

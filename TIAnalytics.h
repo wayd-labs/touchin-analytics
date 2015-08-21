@@ -25,8 +25,10 @@ typedef enum {
 
 -(void) trackEvent: (NSString *) name;
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties;
-
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties sendToTrackers: (bool) sendToTrackers;
+
+-(void) trackSignUp: (NSString*) method properties: (NSDictionary *) properties;
+-(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties;
 
 -(void) trackTimedEvent: (NSString*) name properties: (NSDictionary *) properties;
 -(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) properties;
@@ -34,6 +36,8 @@ typedef enum {
 -(void) trackError: (NSString *) name properties: (NSDictionary *) properties;
 
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency;
+
+
 
 -(void) identify: (NSString *)identity;
 -(void) signUp:(NSString *)identity;

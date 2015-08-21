@@ -23,6 +23,15 @@
                            itemId:name
                  customAttributes:@{}];
 }
+
+-(void) trackSignUp: (NSString*) method properties: (NSDictionary *) properties {
+  [Answers logSignUpWithMethod:method success:@YES customAttributes:properties];
+}
+
+-(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties {
+  [Answers logLoginWithMethod:method success:@YES customAttributes:properties];
+}
+
 #endif
 
 @end
