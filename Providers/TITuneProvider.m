@@ -17,7 +17,7 @@
 -(id) initialize: (NSDictionary *) tokens {
     NSArray* token = [tokens objectForKey:@"tune"];
     [Tune initializeWithTuneAdvertiserId:token[0]
-                       TuneConversionKey:token[1]];
+                       tuneConversionKey:token[1]];
     return self;
 }
 
