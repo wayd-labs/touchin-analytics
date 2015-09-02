@@ -8,6 +8,7 @@
 
 #import "TIAnalytics.h"
 #import "TIAnalyticsProviders.h"
+#import "TILog.h"
 
 @implementation TIAnalytics
 
@@ -46,17 +47,17 @@ NSMutableDictionary* timedEvents;
 
 #if TIA_LOCALYTICS_EXISTS
     [providers addObject:[[TILocalyticsProvider new] initialize:tokens]];
-    NSLog(@"Locatytics initialized");
+    [TILog info:[NSString stringWithFormat:@"Locatytics initialized"]];
 #endif
 
 #if TIA_AMPLITUDE_EXISTS
     [providers addObject:[[TIAmplitudeProvider new] initialize:tokens]];
-    NSLog(@"Amplitude initialized");
+    [TILog info:[NSString stringWithFormat:@"Amplitude initialized"]];
 #endif
     
 #if TIA_TUNE_EXISTS
     [providers addObject:[[TITuneProvider new] initialize:tokens]];
-    NSLog(@"Tune initialized");
+    [TILog info:[NSString stringWithFormat:@"Tune initialized"]];
 #endif
 
 #if TIA_APPSFLYER_EXISTS
@@ -65,12 +66,12 @@ NSMutableDictionary* timedEvents;
 
 #if TIA_MIXPANEL_EXISTS
     [providers addObject:[[TIMixpanelProvider new] initialize:tokens]];
-    NSLog(@"Mixpanel initialized");
+    [TILog info:[NSString stringWithFormat:@"Mixpanel initialized"]];
 #endif
     
 #if TIA_ANSWERS_EXISTS
     [providers addObject:[[TIAnswersProvider new] initialize:tokens]];
-    NSLog(@"Answers initialized");
+    [TILog info:[NSString stringWithFormat:@"Answers initialized"]];
 #endif
 
     if ([providers count] != [tokens count]) {
@@ -99,7 +100,7 @@ NSMutableDictionary* timedEvents;
 
 -(void) trackScreen:(NSString *) name objectId:(NSString *) objectId {
     [self trackEvent:[name stringByAppendingString:@"_SHOWN"] properties:objectId ? @{@"objectId": objectId}: nil];
-    NSLog(@"ANALYTICS SCREEN: %@, %@", name, objectId);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS SCREEN: %@, %@", name, objectId]];
 }
 
 -(void) trackEvent:(NSString *) name {
@@ -110,7 +111,7 @@ NSMutableDictionary* timedEvents;
     for (int i=0; i < [providers count]; i++) {
       [providers[i] trackEvent:name properties:properties sendToTrackers:sendToTrackers];
     }
-    NSLog(@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS%@: %@, %@", sendToTrackers ? @"+TRACKERS" : @"", name, properties]];
 }
 
 -(void) trackEvent: (NSString *) name properties: (NSDictionary *) properties {
@@ -121,14 +122,14 @@ NSMutableDictionary* timedEvents;
   for (int i=0; i < [providers count]; i++) {
     [providers[i] trackSignUp:method properties:properties];
   }
-  NSLog(@"#ti-analytics SIGNUP: %@, %@", method, properties);
+  [TILog info:[NSString stringWithFormat:@"#ti-analytics SIGNUP: %@, %@", method, properties]];
 }
 
 -(void) trackLogin: (NSString*) method properties: (NSDictionary *) properties {
   for (int i=0; i < [providers count]; i++) {
     [providers[i] trackLogin:method properties:properties];
   }
-  NSLog(@"#ti-analytics LOGGEDIN: %@, %@", method, properties);
+  [TILog info:[NSString stringWithFormat:@"#ti-analytics LOGGEDIN: %@, %@", method, properties]];
 }
 
 
@@ -138,25 +139,25 @@ NSMutableDictionary* timedEvents;
     }
     
     if ([timedEvents objectForKey:name]) {
-        NSLog(@"DOUBLED TIMED EVENT! %@", name);
+        [TILog info:[NSString stringWithFormat:@"DOUBLED TIMED EVENT! %@", name]];
     }
     NSMutableDictionary* mutableProps = [NSMutableDictionary new];
     [mutableProps addEntriesFromDictionary:properties];
     timedEvents[name] = mutableProps;
     timedEvents[name][@"time"] = [NSDate date];
     [self trackEvent:[name stringByAppendingString:@"_start"] properties:properties];
-    NSLog(@"ANALYTICS timed event start %@ %@", name, timedEvents[name][@"time"]);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS timed event start %@ %@", name, timedEvents[name][@"time"]]];
 }
 
 -(void) trackTimedEventEnd: (NSString*) name addproperties: (NSDictionary *) addproperties {
     NSTimeInterval time = -1;
     if (![timedEvents objectForKey:name]) {
-        NSLog(@"NO SUCH TIMED EVENT! %@", name);
+        [TILog info:[NSString stringWithFormat:@"NO SUCH TIMED EVENT! %@", name]];
     } else {
         time = [[NSDate date] timeIntervalSinceDate:timedEvents[name][@"time"]];
     }
     NSString *timeformatted = [NSString stringWithFormat:@"%.1f", time];
-    NSLog(@"ANALYTICS timed event end %@ %@", name, timeformatted);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS timed event end %@ %@", name, timeformatted]];
     NSMutableDictionary *fullProperties = [NSMutableDictionary new];
     [fullProperties addEntriesFromDictionary:timedEvents[name]];
     [fullProperties addEntriesFromDictionary:addproperties];
@@ -181,7 +182,7 @@ NSMutableDictionary* timedEvents;
 
 -(void) identify: (NSString *)identity {
     [self peopleSet:@"last_login" to:[NSDate date]];
-    NSLog(@"ANALYTICS IDENTIFY: %@", identity);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS IDENTIFY: %@", identity]];
 }
 
 -(void) signUp:(NSString *)identity {
@@ -204,7 +205,7 @@ NSString* UD_PREFIX = @"TIAnalytics";
 //    if (self.is_mixpanel) {
 //        [Mixpanel.sharedInstance.people set:data];
 //    }
-    NSLog(@"ANALYTICS PeopleSet: %@", data);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS PeopleSet: %@", data]];
 }
 
 -(void) peopleSet: (NSString *)property to:(id)object {
@@ -212,7 +213,7 @@ NSString* UD_PREFIX = @"TIAnalytics";
 //        [Mixpanel.sharedInstance.people set:property to:object];
 //    }
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:[UD_PREFIX stringByAppendingString:property]];
-    NSLog(@"ANALYTICS PeopleSet %@ to %@", property, object);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS PeopleSet %@ to %@", property, object]];
 }
 
 -(void) peopleIncrement:(NSString *)property by:(NSNumber *)amount {
@@ -225,7 +226,7 @@ NSString* UD_PREFIX = @"TIAnalytics";
         prev = ((NSNumber*) was).intValue;
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:prev+1] forKey:[UD_PREFIX stringByAppendingString:property]];
-    NSLog(@"ANALYTICS People Increment: %@ by %@ (was %ld)", property, amount, (long)prev);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS People Increment: %@ by %@ (was %ld)", property, amount, (long)prev]];
 }
 
 -(id) peopleGet:(NSString*) property {
@@ -238,7 +239,7 @@ NSString* UD_PREFIX = @"TIAnalytics";
         return 0;
     }
     NSInteger val = [((NSNumber*) obj) integerValue];
-    NSLog(@"ANALYTICS People Get: %@ = %ld)", property, val);
+    [TILog info:[NSString stringWithFormat:@"ANALYTICS People Get: %@ = %ld)", property, val]];
     return val;
 }
 
