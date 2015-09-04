@@ -128,7 +128,7 @@ NSMutableDictionary* timedEvents;
   for (int i=0; i < [providers count]; i++) {
     [providers[i] trackLogin:method properties:properties];
   }
-  NSLog(@"#ti-analytics LOGGEDIN: %@, %@", method, properties);
+  NSLog(@"#ti-analytics LOGGED_IN: %@, %@", method, properties);
 }
 
 
