@@ -8,7 +8,6 @@
     NSArray* token = [tokens objectForKey:@"appsflyer"];
     [AppsFlyerTracker sharedTracker].appsFlyerDevKey = token[0];
     [AppsFlyerTracker sharedTracker].appleAppID = token[1];
-    [AppsFlyerTracker sharedTracker].isHTTPS = YES;
     NSLog(@"AppsFlyer initialized");
     return self;
 }
