@@ -21,8 +21,12 @@
 -(void) trackPurchaseWithItemName: (NSString*) name amount: (NSDecimalNumber*) amount currency: (NSString*) currency {
   //FIXME currency use
   [[Amplitude instance] logRevenue:name quantity:1 price:amount];
+  [super trackPurchaseWithItemName:name amount:amount currency:currency];
 }
-//TODO people set
+
+-(void) peopleSet:(NSDictionary *)data {
+  [[Amplitude instance] setUserProperties:data];
+}
 #endif
 
 @end

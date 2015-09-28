@@ -62,12 +62,6 @@
 -(void) peopleSet: (NSString *)property to:(id)object {
   
 }
--(void) peopleIncrement:(NSString *)property by:(NSNumber *)amount {
-  
-}
-
--(id) peopleGet:(NSString*) property {
-}
 
 -(NSInteger) peopleGetInteger:(NSString*) property {
   return 0;

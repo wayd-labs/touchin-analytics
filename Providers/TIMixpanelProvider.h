@@ -10,4 +10,6 @@
 
 @interface TIMixpanelProvider : TIAnalyticsProvider
 
+-(void) peopleIncrement:(NSString*) property by:(NSNumber *)amount;
+
 @end

@@ -178,10 +178,14 @@ NSMutableDictionary* timedEvents;
     for (int i=0; i < [providers count]; i++) {
         [providers[i] trackPurchaseWithItemName:name amount:amount currency:currency];
     }
+  [self peopleSet:@"paying" to:[[NSNumber alloc] initWithBool:true]];
 }
 
 -(void) identify: (NSString *)identity {
     [self peopleSet:@"last_login" to:[NSDate date]];
+    for (int i=0; i < [providers count]; i++) {
+       [providers[i] identify:identity];
+    }
     [TILog info:[NSString stringWithFormat:@"ANALYTICS IDENTIFY: %@", identity]];
 }
 
@@ -202,17 +206,15 @@ NSMutableDictionary* timedEvents;
 NSString* UD_PREFIX = @"TIAnalytics";
 
 -(void) peopleSet: (NSDictionary *) data {
-//    if (self.is_mixpanel) {
-//        [Mixpanel.sharedInstance.people set:data];
-//    }
+    for (int i=0; i < [providers count]; i++) {
+       [providers[i] peopleSet:data];
+    }
     [TILog info:[NSString stringWithFormat:@"ANALYTICS PeopleSet: %@", data]];
 }
 
 -(void) peopleSet: (NSString *)property to:(id)object {
-//    if (self.is_mixpanel) {
-//        [Mixpanel.sharedInstance.people set:property to:object];
-//    }
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:[UD_PREFIX stringByAppendingString:property]];
+    [self peopleSet:@{property:object}];
     [TILog info:[NSString stringWithFormat:@"ANALYTICS PeopleSet %@ to %@", property, object]];
 }
 
@@ -220,12 +222,17 @@ NSString* UD_PREFIX = @"TIAnalytics";
 //    if (self.is_mixpanel) {
 //        [Mixpanel.sharedInstance.people increment:property by:amount];
 //    }
-    NSObject* was = [[NSUserDefaults standardUserDefaults] objectForKey:[UD_PREFIX stringByAppendingString:property]];
-    NSInteger prev = 0;
-    if ((was != nil) && [was isKindOfClass:[NSNumber class]]) {
-        prev = ((NSNumber*) was).intValue;
+    NSInteger prev = [self peopleGetInteger:property];
+    NSInteger new = prev + amount.integerValue;
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:new] forKey:[UD_PREFIX stringByAppendingString:property]];
+
+    for (int i=0; i < [providers count]; i++) {
+      if ([providers[i] respondsToSelector:@selector(peopleIncrement:by:)]) {
+        [providers[i] peopleIncrement:property by:amount];
+      } else {
+        [providers[i] peopleSet:property to:[[NSNumber alloc]initWithInteger:new]];
+      }
     }
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:prev+1] forKey:[UD_PREFIX stringByAppendingString:property]];
     [TILog info:[NSString stringWithFormat:@"ANALYTICS People Increment: %@ by %@ (was %ld)", property, amount, (long)prev]];
 }
 

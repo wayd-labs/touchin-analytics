@@ -27,11 +27,6 @@
 -(void) signUp:(NSString *)identity;
 
 -(void) peopleSet: (NSDictionary *) data;
--(void) peopleSet: (NSString *)property to:(id)object;
--(void) peopleIncrement:(NSString *)property by:(NSNumber *)amount;
-//peopleSet not only simple calls to MixPanel people, but also stores value in NSDefauls, so in such way we can get property value back and use, for example, for touchin-rate me condition
--(id) peopleGet:(NSString*) property;
--(NSInteger) peopleGetInteger:(NSString*) property;
 
 - (void)applicationDidBecomeActive;
 - (void)applicationOpenUrl:(NSURL*) url sourceApplication:(NSString*) sourceApplication;

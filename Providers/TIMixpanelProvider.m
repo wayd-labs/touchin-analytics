@@ -17,6 +17,15 @@
 -(void) identify: (NSString *) userId {
     [Mixpanel.sharedInstance identify:userId];
 }
+
+-(void) peopleSet: (NSDictionary *) data {
+  [Mixpanel.sharedInstance.people set:data];
+}
+
+-(void) peopleIncrement:(NSString*) property by:(NSNumber *)amount {
+  [Mixpanel.sharedInstance.people increment:property by:amount];
+}
+
 #endif
 
 @end
