@@ -26,6 +26,16 @@
     };
 [Localytics tagEvent:[NSString stringWithFormat:@"BUY_%@", name] attributes: attributes customerValueIncrease:amount];
 }
+
+- (void) peopleSet:(NSDictionary *)data {
+  for(id key in data) {
+    [Localytics setValue:data[key] forIdentifier:key];
+  }
+}
+
+- (void) identify:(NSString *)identity {
+  [Localytics setCustomerId:identity];
+}
 #endif
 
 @end
