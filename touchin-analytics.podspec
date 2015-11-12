@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "1.2.1"
+  s.version          = "1.2.2"
   s.summary          = "A short description of touchin-analytics."
   s.description      = <<-DESC
                        An optional longer description of touchin-analytics
@@ -28,8 +28,9 @@ Pod::Spec.new do |s|
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
   answers = { :spec_name => "Answers", :dependency => "Fabric"}
+  launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
-  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers]
+  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
 
   s.subspec "CoreIOS" do |ss|
     ss.source_files = ['*.{h,m}', 'Providers/TIAnalyticsProviders.h']

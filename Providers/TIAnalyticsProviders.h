@@ -26,3 +26,8 @@
 #import "TIAnswersProvider.h"
 #endif
 
+#if TIA_LAUNCHKIT_EXISTS
+#import "TILaunchKitProvider.h"
+#endif
+
+
