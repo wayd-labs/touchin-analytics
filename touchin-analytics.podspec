@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   answers = { :spec_name => "Answers", :dependency => "Fabric"}
   launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
-  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
+  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers]
 
   s.subspec "CoreIOS" do |ss|
     ss.source_files = ['*.{h,m}', 'Providers/TIAnalyticsProviders.h']
