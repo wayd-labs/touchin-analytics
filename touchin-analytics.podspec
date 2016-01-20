@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
   answers = { :spec_name => "Answers", :dependency => "Fabric"}
 
-  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers]
+  all_analytics = [localytics, flurry, amplitude, appsflyer, mixpanel, answers]
 
   s.subspec "CoreIOS" do |ss|
     ss.source_files = ['*.{h,m}', 'Providers/TIAnalyticsProviders.h']
