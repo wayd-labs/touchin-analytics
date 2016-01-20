@@ -74,6 +74,11 @@ NSMutableDictionary* timedEvents;
     [TILog info:[NSString stringWithFormat:@"Answers initialized"]];
 #endif
 
+#if TIA_LAUNCHKIT_EXISTS
+  [providers addObject:[[TILaunchKitProvider new] initialize:tokens]];
+  [TILog info:[NSString stringWithFormat:@"LaunchKit initialized"]];
+#endif
+
     if ([providers count] != [tokens count]) {
         [NSException raise:@"TIAnalytics. Not all tokens initialazied." format:@"Not all analytics tokens (tokens: %lu, initialized: %lu) used, check pods and names",
             (unsigned long)[tokens count], (unsigned long)[providers count]];
