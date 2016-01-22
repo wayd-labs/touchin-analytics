@@ -1,6 +1,7 @@
 
 #import "TIAnswersProvider.h"
-#import "Answers.h"
+#import "Fabric/Fabric.h"
+#import "Crashlytics/Answers.h"
 @implementation TIAnswersProvider
 
 #if TIA_ANSWERS_EXISTS
