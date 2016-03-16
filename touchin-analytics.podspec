@@ -13,9 +13,9 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  localytics     = { :spec_name => "Localytics",          :dependency => "Localytics" }
+  localytics     = { :spec_name => "Localytics",          :vendored_libraries => "Localytics" }
   flurry         = { :spec_name => "Flurry",              :dependency => "Flurry-iOS-SDK/FlurrySDK" }
-  appsflyer      = { :spec_name => "AppsFlyer",           :dependency => "AppsFlyer-SDK" }
+  appsflyer      = { :spec_name => "AppsFlyer",           :vendored_libraries => "AppsFlyer-SDK" }
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
