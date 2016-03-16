@@ -13,10 +13,6 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  s.preserve_paths = "Touchin-analytics.framework/Touchin-analytics"
-  s.vendored_libraries = "libTouchin-analytics.a"
-  s.prepare_command = "touch Empty.m && cp Touchin-analytics.framework/Touchin-analytics libTouchin-analytics.a"
-
   localytics     = { :spec_name => "Localytics",          :dependency => "Localytics" }
   flurry         = { :spec_name => "Flurry",              :dependency => "Flurry-iOS-SDK/FlurrySDK" }
   appsflyer      = { :spec_name => "AppsFlyer",           :dependency => "AppsFlyer-SDK" }
