@@ -1,9 +1,11 @@
 #import "TIAppsFlyerProvider.h"
-#import "AppsFlyerTracker.h"
 
 @implementation TIAppsFlyerProvider
 
 #if TIA_APPSFLYER_EXISTS
+
+#import "AppsFlyerTracker.h"
+
 -(id) initialize: (NSDictionary *) tokens {
     NSArray* token = [tokens objectForKey:@"appsflyer"];
     [AppsFlyerTracker sharedTracker].appsFlyerDevKey = token[0];

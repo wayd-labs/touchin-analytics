@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "1.2.3"
+  s.version          = "1.3.0"
   s.summary          = "A short description of touchin-analytics."
   s.homepage         = "https://github.com/wayd-labs/touchin-analytics"
   s.license          = 'MIT'
@@ -45,16 +45,14 @@ Pod::Spec.new do |s|
       # If there's a podspec dependency include it
       Array(analytics_spec[:dependency]).each do |dep|
         ss.dependency dep
+        ss.pod_target_xcconfig = {
+           'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/analytics_spec[:spec_name]',
+           'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
+        }
       end
 
     end
   end
 
-  # s.frameworks = 'UIKit', 'MapKit'
-  #s.dependency 'FlurrySDK'
-  #s.dependency 'Mixpanel'
-  #s.dependency 'AppsFlyer-SDK', '2.5.3.15.1'
-  #s.dependency 'MobileAppTracker', '~>3.8.1'
-  #s.dependency 'Localytics-AMP'
-  #s.dependency 'Facebook-iOS-SDK', '~>4'
+  s.dependency 'touchin-trivia'
 end
