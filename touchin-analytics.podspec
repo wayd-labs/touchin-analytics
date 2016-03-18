@@ -45,11 +45,12 @@ Pod::Spec.new do |s|
       # If there's a podspec dependency include it
       Array(analytics_spec[:dependency]).each do |dep|
         ss.dependency dep
-        ss.pod_target_xcconfig = {
-           'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/analytics_spec[:spec_name]',
-           'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
-        }
       end
+
+      ss.pod_target_xcconfig = {
+           'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/' + analytics_spec[:dependency],
+           'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
+      }
 
     end
   end
