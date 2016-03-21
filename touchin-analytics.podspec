@@ -47,10 +47,10 @@ Pod::Spec.new do |s|
         ss.dependency dep
       end
 
-      ss.pod_target_xcconfig = {
-           'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/' + analytics_spec[:dependency],
-           'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
-      }
+#      ss.pod_target_xcconfig = {
+#           'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/' + analytics_spec[:dependency],
+#           'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
+#      }
 
     end
   end
