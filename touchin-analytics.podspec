@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
-  answers = { :spec_name => "Answers", :vendored_libraries => "Crashlytics"}
+  answers = { :spec_name => "Answers", :dependency => "CrashlyticsRecorder"}
   launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
   all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
