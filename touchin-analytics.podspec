@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "1.3.0"
+  s.version          = "1.3.1"
   s.summary          = "A short description of touchin-analytics."
   s.homepage         = "https://github.com/wayd-labs/touchin-analytics"
   s.license          = 'MIT'
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
-  answers = { :spec_name => "Answers", :dependency => "Fabric"}
+  answers = { :spec_name => "Answers", :dependency => "Crashlytics"}
   launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
   all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
