@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
-  answers = { :spec_name => "Answers", :dependency => "Crashlytics"}
+  answers = { :spec_name => "Answers", :dependenc => "Crashlytics"}
   launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
   all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
@@ -45,12 +45,12 @@ Pod::Spec.new do |s|
       # If there's a podspec dependency include it
       Array(analytics_spec[:dependency]).each do |dep|
         ss.dependency dep
-      end
 
-      ss.pod_target_xcconfig = {
+        ss.pod_target_xcconfig = {
            'FRAMEWORK_SEARCH_PATHS' => '$(inherited) $(PODS_ROOT)/' + analytics_spec[:dependency],
            'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
-      }
+        }
+     end
 
     end
   end
