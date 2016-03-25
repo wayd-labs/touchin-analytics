@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "touchin-analytics"
-  s.version          = "1.3.1"
+  s.version          = "1.3.3"
   s.summary          = "A short description of touchin-analytics."
   s.homepage         = "https://github.com/wayd-labs/touchin-analytics"
   s.license          = 'MIT'
@@ -15,14 +15,14 @@ Pod::Spec.new do |s|
 
   localytics     = { :spec_name => "Localytics",          :dependency => "Localytics" }
   flurry         = { :spec_name => "Flurry",              :dependency => "Flurry-iOS-SDK/FlurrySDK" }
-  appsflyer      = { :spec_name => "AppsFlyer",           :dependency => "AppsFlyer-SDK" }
+  appsflyer      = { :spec_name => "AppsFlyer", :dependency => "AppsFlyerFramework", :frameworks => "AdSupport.framework" }
   amplitude      = { :spec_name => "Amplitude", :dependency => "Amplitude-iOS" }
   tune = { :spec_name => "Tune", :dependency => "MobileAppTracker"} 
   mixpanel = { :spec_name => "Mixpanel", :dependency => "Mixpanel"}
-  answers = { :spec_name => "Answers", :dependenc => "Crashlytics"}
+  answers = { :spec_name => "Answers", :dependency => "Crashlytics"}
   launchkit = { :spec_name => "LaunchKit", :dependency => "LaunchKit"}  
 
-  all_analytics = [localytics, flurry, amplitude, appsflyer, tune, mixpanel, answers, launchkit]
+  all_analytics = [answers, localytics, flurry, amplitude, appsflyer, tune, mixpanel, launchkit]
 
   s.subspec "CoreIOS" do |ss|
     ss.source_files = ['*.{h,m}', 'Providers/TIAnalyticsProviders.h']
@@ -36,12 +36,9 @@ Pod::Spec.new do |s|
 
       # Each subspec adds a compiler flag saying that the spec was included
       ss.prefix_header_contents = "#define TIA_#{providername.upcase}_EXISTS 1"
-      sources = ["Providers/TI#{providername}Provider.{h,m}"]
-
-      ss.ios.source_files = sources
+      ss.source_files = ["Providers/TI#{providername}Provider.{h,m}", "Empty.m"]
       ss.dependency 'touchin-analytics/CoreIOS'
       ss.platform = :ios
-
       # If there's a podspec dependency include it
       Array(analytics_spec[:dependency]).each do |dep|
         ss.dependency dep

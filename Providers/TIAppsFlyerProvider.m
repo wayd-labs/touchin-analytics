@@ -1,5 +1,5 @@
 #import "TIAppsFlyerProvider.h"
-#import "AppsFlyerTracker.h"
+#import <AppsFlyer/AppsFlyer.h>
 
 @implementation TIAppsFlyerProvider
 
@@ -22,7 +22,7 @@
      NSDictionary *properties = @{
         @"name": name,
         @"amount": amount,
-        @"currency": currency,
+        AFEventParamCurrency: currency,
         AFEventParamRevenue: amount,
         AFEventParamPrice: amount
     };
