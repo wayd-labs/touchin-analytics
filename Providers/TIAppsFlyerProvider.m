@@ -1,5 +1,6 @@
 #import "TIAppsFlyerProvider.h"
-#import <AppsFlyer/AppsFlyer.h>
+//#import <AppsFlyer/AppsFlyer.h>
+#import "AppsFlyerTracker.h"
 
 @implementation TIAppsFlyerProvider
 
